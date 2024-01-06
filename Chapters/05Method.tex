@@ -1,0 +1,168 @@
+\section{Variable importance in a Bayesian framework}
+\label{sec:implementation}
+We now propose a method for calculating relative variable importance in a Bayesian framework, which we call Bayesian Variable Importance (BVI). 
+The BVI method is based on the idea that the relative weights approach, introduced in \Cref{sec:relativeweights}, combined with its extension \citep{matre} can be used to fit a Bayesian LMM.
+With this basis we believe that it is possible to create a Bayesian relative importance measure, by taking the new framework into account.
+%The BVI method is based on the relative weights approach introduced in \Cref{sec:relativeweights} and extended by \citet{matre}, to fit a Bayesian LMM using INLA, which is described in \Cref{sec:INLA_framework}.
+When considering the fixed effects there are multiple established methods to compare results with. Here, we compare our results to the previously discussed methods LMG \citep{gromping_relaimpo}, the extended LMG (ELMG) and the extended relative weights (ERW) \citep{matre}.
+The ELMG and the ERW are extensions of the LMG and relative weights methods respectively, to be compatible with the linear mixed models.
+This thesis will focus on linear mixed models containing only random intercepts. 
+More general methods with random slopes and GLMM's with a link function not corresponding to a normal distribution are not in the scope of this thesis.
+
+\subsection{Relative variable importance calculations}
+First, we must incorporate the matrix transformation from the relative weights method for the Bayesian framework.
+The orthogonal matrix $\mathbf{Z}$ is generated from only the fixed effects $\mathbf{X}$, which corresponds to the variables for the fixed effects also in the Bayesian framework. Therefore, we can apply this transformation before the Bayesian analysis is performed.
+This transformation includes standardizing the data to be centered around zero and a standard deviation of one unit variance, as well as orthogonalizing the design matrix.
+\newline
+\newline
+The variance decomposition of the random intercept model takes the form
+%The variance decomposition of the above explained model using $\mathbf{Z}$ is
+\begin{equation}
+    \text{Var}(\mathbf{y}) = \text{Var}(\mathbf{X}\boldsymbol{\beta}_{\mathbf{X}} + \mathbf{U}\boldsymbol{\alpha} + \boldsymbol{\varepsilon}) = \boldsymbol{\beta}_{\mathbf{X}}^T\text{Var}(\mathbf{X})\boldsymbol{\beta}_{\mathbf{X}} + \mathbf{U}\mathbf{G}\mathbf{U}^T + \sigma_{\varepsilon}^2\mathbf{I} = 1  \ ,
+    \label{eqn:Variance_random}
+\end{equation}
+where $\mathbf{U}$ is now a sparse block matrix where each block $\mathbf{U}_j \in \mathbb{R}^{n_j \times q}$ is a matrix of ones, $n_j$ the number of observations in cluster $j$, $q$ the number of random intercepts and $\mathbf{G}$ is a blockdiagonal matrix with $\mathbf{Q}$ on the diagonal.
+In the special case of an independent and identically distributed (iid) random intercept model, this variance decomposition can be simplified.
+With several, independent random intercepts, each intercept $\boldsymbol{\alpha}_j$ contributes $\sigma^2_{\alpha_j}$ to the total model variance, making $\mathbf{G}$ a diagonal matrix, so the total variance of the model can be decomposed as
+\begin{equation}\label{eq:variance_theoretical_x}
+    \text{Var}(\mathbf{y}) = \sum_{i=1}^p \beta_{i, \mathbf{X}}^2 v_{i, \mathbf{x}_i} + 2 \sum_{i=1}^p \sum_{k=i+1}^p \beta_{i, \mathbf{X}}\beta_{k, \mathbf{X}}\sqrt{v_{i, \mathbf{x}_i}v_{k, \mathbf{x}_k}}\rho_{ik} + \sum_{j=1}^q \sigma^2_{\alpha_j} + \sigma^2_{\epsilon} = 1 \ ,
+\end{equation}
+where $\beta_{i, \mathbf{X}}$ is the vector of regression coefficients when regressing $\mathbf{y}$ on $\mathbf{X}$, $v_{i, \mathbf{x}_i}$ is the variance of the $i$'th column $\mathbf{x}_i$ and $\rho_{ik}$ is the correlation between the $i$'th and $k$'th columns. 
+However, with the relative weights method, we approximate the design matrix $\mathbf{X}$ with the orthogonal matrix $\mathbf{Z}$. 
+Consequently, the variance of each column in $\mathbf{Z}$, $v_{i, \mathbf{z}_i}$, is equal to one and the correlation $\rho_{ik}$ between the columns is zero. 
+Therefore, the total variance in \eqref{eq:variance_theoretical_x} can be approximated by
+\begin{equation}\label{eq:variance_rw}
+    \text{Var}(\mathbf{y}) \approx \sum_{i=1}^p \beta_{i, \mathbf{Z}}^2 + \sum_{j=1}^q \sigma^2_{\alpha_j} + \sigma^2_{\epsilon} \ ,
+\end{equation}
+where $\beta_{i, \mathbf{Z}}$ is the vector of regression coefficients when regressing $\mathbf{y}$ on $\mathbf{Z}$, $\beta_{i, \mathbf{Z}}^2$ represents the variance of column $\mathbf{z}_i$, $\sigma_{\alpha_j}^2$ the variance of $\boldsymbol{\alpha}_j$ and $\sigma^2_{\varepsilon}$ the variance of $\boldsymbol{\varepsilon}$.
+To map the importances of each column in $\mathbf{z}_i$ back to the importance of the columns $\mathbf{x}_i$, we regress $\mathbf{Z}$ on $\mathbf{X}$ to obtain the matrix $\boldsymbol{\Lambda}$ as in \Cref{sec:relativeweights}.
+The final model variance obtained from this setup, can then be estimated as 
+\begin{equation}
+    \label{eq:variance_calc}
+    \text{Var}(\mathbf{y}) \approx \sum_{i=1}^p \text{RI}(\mathbf{x}_i) + \sum_{j=1}^q \sigma^2_{\alpha_j} + \sigma^2_{\epsilon} \approx \sum_{i=1}^p (\Lambda^{[2]}\beta_{\mathbf{Z}}^{[2]})_i + \sum_{j=1}^q \sigma^2_{\alpha_j} + \sigma^2_{\epsilon} \ ,
+\end{equation}
+where $\mathbf{x}_i$ is column $i$ of $\mathbf{X}$.  
+Since the response is standardized the relative importance, or proportion of variance explained, of regressor $X_i$ is given by $\Lambda^{[2]}\beta_{\mathbf{Z}}^{[2]}$ and the relative importance of random intercept $\boldsymbol{\alpha}_j$ is given by $\sigma^2_{\alpha_j}$.
+\subsection{Handling the model fit with INLA}
+\label{sec:BVI_handling}
+Once $\mathbf{Z}$ has been created from the projection of $\mathbf{X}$ into the orthogonal space, a model of the response, which has the form as explained in \Cref{sec:LMM}, is fit using $\mathbf{Z}$ as the design matrix and INLA. 
+INLA is our preferred computational tool to fit the Bayesian LMM since it is very efficient, especially for large data sets and complex models.
+After the model is fit, INLA provides the approximate marginal posterior distribution of each component in $\boldsymbol{\beta}_{\mathbf{Z}}$, the precision of $\boldsymbol{\alpha}$, the precision of $\boldsymbol{\varepsilon}$ and allows us to sample from the joint posterior distribution $\pi(\boldsymbol{\beta}_{\mathbf{Z}}, \boldsymbol{\alpha}, \boldsymbol{\varepsilon} \lvert \mathbf{y})$. 
+Since each random intercept and the random errors are assumed to be iid, the marginal distributions of the precisions represent the full distributions of the precisions. 
+The respective distributions are then inverted, so that they correspond to the distribution of the variances for $\boldsymbol{\alpha}$ and $\boldsymbol{\varepsilon}$. 
+Since the response is standardized, these variance distributions correspond to a distribution of the proportion of variance explained by each random intercept, i.e. a distribution of their relative importance.
+For the fixed effects, samples of $\boldsymbol{\beta}_{\mathbf{Z}}$ from the joint posterior are drawn, squared and transformed with \eqref{eq:RI_lambda}, to represent a sampled distribution of the individual relative importance. 
+We must sample $\boldsymbol{\beta}_{\mathbf{Z}}$ from the approximate joint distribution since the marginal distributions only describe the behavior of individual components of $\beta_{i, \mathbf{Z}}$ in isolation, and therefore does not take correlation between them into account.
+Using INLA functionality, for a sample $\boldsymbol{\beta}_{s, \mathbf{Z}}$ from the approximate joint distribution we can estimate the relative importance for each column in $\mathbf{X}$ by
+\begin{equation}
+    \text{RI}(\mathbf{X})_s = \boldsymbol{\Lambda}_{s}^{[2]} \boldsymbol{\beta}_{s, \mathbf{Z}}^{[2]} \ ,
+\end{equation}
+where, $\text{RI}(\mathbf{X})_s$ is a column vector where entry $j$ is the estimate of the relative importance of column $j$ in $\mathbf{X}$ from the sample $\boldsymbol{\beta}_{s, \mathbf{Z}}$.
+By repeating this process for multiple samples, one can obtain an estimate of the posterior distribution of each element in $\text{RI}(\mathbf{X})$.
+From the estimated posterior distribution of elements in $\text{RI}(\mathbf{X})$ and the marginal distributions of $\boldsymbol{\alpha$ and $\boldsymbol{\varepsilon}}$ we can obtain the model $R^2$ distribution in the Bayesian framework as described by equations \eqref{eq:R2_bayes_LMM_cond} and \eqref{eq:R2_bayes_LMM_marg}.
+The advantage of having the posterior distributions instead of point estimates is prominent in natural sciences where one might have complex data structures, since it carries a fundamental uncertainty.
+% I dont know where to place the above sentence, but I think it is important to mention!!!!!!
+
+
+
+% \section{Extending the relative weights method to the Bayesian linear regression with random intercepts}
+% %Need a review of this section!
+% The relative weights method proposes a transformation to the covariates in a linear regression. Since the same covariates would also be considered to be fixed effects in a Bayesian setting, one can apply the relative weights transformation to the design matrix $\mathbf{X}$ also in a Bayesian framework.
+% After obtaining the orthogonal matrix $\mathbf{Z}$, random effects $\boldsymbol{\alpha}$ that are assumed independent of the fixed effects can be introduced. 
+% A model can now be fit with the matrix $\mathbf{Z}$ containing the fixed effects and $\boldsymbol{\alpha}$ as the random effects.
+% If one now in addition standardizes the response of this model, the proportion of variance explained by each fixed and random effects can be 
+% These would contribute to the model variance as described in sections \ref{sec:R2_LMM} and \ref{sec:bayes_R2_LMM}.
+
+
+% %NEED TO DECIDE IF WE BACK TRANSFORMS THE IMPORTANCES VIA $\boldsymbol{\Lambda}$ OR NOT. 
+% \begin{equation}
+%         \text{Var}(\mathbf{y}) = \text{Var}(\mathbf{Z}^T\boldsymbol{\beta}_{\mathbf{Z}} + \mathbf{U}\boldsymbol{\alpha} + \boldsymbol{\varepsilon}) = \boldsymbol{\beta}_{\mathbf{Z}}^T\text{Var}(\mathbf{Z})\boldsymbol{\beta}_{\mathbf{Z}} + \mathbf{U}\mathbf{G}\mathbf{U}^T + \sigma_{\varepsilon}^2\mathbf{I}  \ .
+%         \label{eqn:Variance_random}
+% \end{equation}
+% Now a few simplifications can be made for the random intercept model. The matrix $\mathbf{Z}$ now has variance equal to one, the random intercepts are pairwise independent and we have scalar variances for each random intercept. Taking into consideration the form that $\mathbf{U}$ takes for the random intercept model, we can decompose the conditional variance as 
+% \begin{equation} \label{eqn:Variance_random_intercept}
+%     \text{Var}(\mathbf{y}) = \text{Var}(\mathbf{Z}^T\boldsymbol{\beta}_{\mathbf{Z}} + \mathbf{U}\boldsymbol{\alpha} + \boldsymbol{\varepsilon}) = \boldsymbol{\beta}_{\mathbf{Z}}^T\boldsymbol{\beta}_{\mathbf{Z}} + \mathbf{U}\mathbf{G}\mathbf{U}^T + \sigma_{\varepsilon}^2\mathbf{I}  \ .
+% \end{equation}
+% where $\mathbf{U}$ is now a sparse block matrix where each block $\mathbf{U}_j \in \mathbb{R}^{n_j \times q}$ is a matrix of ones with size and $\mathbf{G}$ is a diagonal matrix with $\mathbf{G}_{jj} = \sigma_{\alpha_j}^2$. The resulting matrix $\mathbf{U}\mathbf{G}\mathbf{U}^T$ contains the variance of all random intercepts in the model along its diagonal.
+% The \texttt{R-INLA} package allows us to model this as well as sample from the posterior distribution of all variance components.
+% Thus if one performs the transformation of $\mathbf{X}$ through the relative weights method, and applies INLA with the design matrix $\mathbf{Z}$ along with the random effects, we are able to decompose the variance of the model following \eqref{eqn:Variance_random_intercept}.
+
+
+
+
+%. To calculate the relative variable importance(RVI) we use the posterior mean of the coefficients $\boldsymbol{\beta}$ and $\boldsymbol{\alpha}$ and calculate the RVI for each fixed effect as
+%\begin{equation}
+%    \text{RVI}_i = \frac{\beta_i^2}{\text{Var}(y)} \hspace{5mm} i=1, ..., p \ ,
+%\end{equation}
+%and for each random intercept as 
+%\begin{equation}
+%    \text{RVI}_j = \frac{\sigma^2_{\alpha_j}}{\text{Var}(y)} \hspace{5mm} j=1, ..., q \ .
+%\end{equation}
+%Using the posterior means allow for easier comparisons with the LMG and relative weights methods
+
+
+% Write more about the possibility of obtaining a posterior distribution of the variance explained?
+
+
+%Should I do the simulation study again, but with different regression coefficients and some negative correlation?
+
+\section{Simulation study}
+\label{sec:simulations}
+To evaluate the performance of our proposed method, BVI, a simulation study was conducted. The study investigates how the BVI compares to the relative importance decomposition(Relaimpo) presented in \citet{gromping_relaimpo} and the two methods presented in \citet{matre}.
+The Relaimpo method uses the LMG decomposition and considers only fixed effects and can therefore only be compared with the BVI in the fixed effects. The two methods in \citet{matre}, ELMG and the ERW, are extensions of the LMG and relative weights methods respectively, to include random intercepts.
+These extensions allow us to compare the results for the random intercept model to our BVI method. The decompositions of the variance in \eqref{eq:variance_theoretical_x} can be used to compare the theoretical variance explained in a model against the results from Bayesian Variable Importance method.
+Since the response $\mathbf{y}$ is standardized, each relative importance assigned to a distinct effect is analogous to a proportion or percentage of the total variance of $\mathbf{y}$.
+\newline
+\newline
+To simulate the data we consider the model as in \eqref{eq:LMM}, with a sample size $n=10^4$, $\boldsymbol{\alpha}=(\alpha_1, ..., \alpha_m)$ where $\alpha_i \stackrel{iid}{\sim} \mathcal{N}(0, \tau^2=1)$ as a single random intercept for $m=200$ clusters of $n_j=50$ observations each, $\mathbf{X} \sim \mathcal{N}(\boldsymbol{\mu},\Sigma) \in \mathbb{R}^{n \times p}$, where $\boldsymbol{\mu}=(1, 2, 3)$, $\Sigma_{ii} = 1, \Sigma_{i, k}=\rho_{i, k}, k\neq i$ and $p=3$ consisting of three fixed effects, $\mathbf{U}$ as a desgin matrix of appropriate dimension and a random error $\varepsilon_i \stackrel{iid}{\sim} \mathcal{N}(0, \sigma^2=1)$. 
+Further, the true vector of regression coefficients is set to be set to be $\boldsymbol{\beta}_{\mathbf{X}}=(1, \sqrt{2}, \sqrt{3})^T$ so the total model, including an intercept column of ones, can be written as
+\begin{equation}
+    \label{eq:simulation_model}
+    \mathbf{y} = \mathbf{1} + \mathbf{X}\boldsymbol{\beta}_{\mathbf{X}} + \mathbf{U}\boldsymbol{\alpha} + \boldsymbol{\varepsilon} \ ,
+\end{equation}
+The data is standardized, meaning that $\sigma^2_{\mathbf{y}}=1$, $\boldsymbol{\beta}_{\mathbf{X}}=(\sqrt{1/8}, \sqrt{2/8}, \sqrt{3/8})^T$ and $\sigma^2_{\alpha}=\sigma^2_{\varepsilon} = 1/8$.
+This standardization allows us to easily compare and interpret results as proportions of the total variance of $\mathbf{y}$.
+\newline
+\newline
+From this setup, the theoretical variance of the response is
+\begin{equation}
+    \label{eq:variance_theoretical_simulation}
+    \text{Var}(\mathbf{y}) = \beta_{1, \mathbf{X}}^2 + \beta_{2, \mathbf{X}}^2 + \beta_{3, \mathbf{X}}^2 + 2\sum_{j=1}^{3}\sum_{k=j+1}^{3} \beta_{j, \mathbf{X}}\beta_{k, \mathbf{X}}\rho_{jk} + \sigma_{\alpha}^2 + \sigma^2_{\varepsilon} \ .
+\end{equation}
+as in \eqref{eq:variance_theoretical_x} and the theoretically correct relative importances for uncorrelated data are
+\begin{equation}
+    \begin{aligned}
+        \text{RI}(\mathbf{x}_1) =  \beta_{1, \mathbf{X}}^2& = \text{RI}(\alpha) = \sigma^2_{\alpha} = \frac{1}{8} \hspace{1mm}, \hspace{1mm} \text{RI}(\mathbf{x}_2) = \beta_{2, \mathbf{X}}^2 = \frac{2}{8} \hspace{1mm}, \hspace{1mm} \text{RI}(\mathbf{x}_3) = \beta_{3, \mathbf{X}}^2 = \frac{3}{8} \ . 
+    \end{aligned}
+\end{equation}
+Further, the theoretically expected marginal and conditional $R^2$ values can be calculated from \ref{eq:variance_theoretical_simulation} as the variance of the fixed effects divided by the total variance and the variance of the fixed effects and random intercepts divided by the total variance respectively. 
+The $R^2$ values are listed in \Cref{table:1}.
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{lrr}
+    \hline
+    $\rho$ & $R^2_{\text{marg}}$ & $R^2_{\text{cond}}$\\ 
+    \hline
+    $0$ & $0.750$ &  $0.875$ \\ 
+    $0.1$ & $0.781$ & $0.890$ \\ 
+    $0.5$ & $0.852$ & $0.926$\\ 
+    $0.9$ & $0.889$ & $0.945$\\ 
+    \hline
+    \end{tabular}
+    \caption{The theoretically correct marginal variance explained (left column) and conditional variance explained (right column) for different correlation levels between the fixed effects.}
+    \label{table:1}
+\end{table}
+These values provide an empiric way of checking if our method fulfills the proper decomposition criteria listed in \Cref{sec:rel_imp}, by seeing if the relative importances for each effect sum to the model $R^2$.
+\newline
+To investigate how different correlations between the fixed effects are handled by the method, we consider four different correlation levels between the fixed covariates in our data. That is achieved by letting $\rho_{1, 2} = \rho_{1, 3} = \rho_{2, 3}$ take on the values $\{0, 0.1, 0.5, 0.9$\}.
+For each correlation level, we simulate $N=1000$ datasets and fit each of the four methods BVI, Relaimpo, ELMG and ERW.
+To get a comparable measure from the Bayesian framework to the frequentist framework, we use the posterior means of the sampled posterior distribution of $\text{RI}(\mathbf{X})$ when estimating \eqref{eq:variance_calc}.
+It can here be noted that in the BVI method the approximated posterior marginals for each predictor, as well as the sampled posterior distribution of $\boldsymbol{\beta}_{\mathbf{Z}}$ and $\text{RI}(\mathbf{X})$, are available for each dataset. 
+
+
+% To easily compare the BVI method with the Relaimpo, the ELMG and ERW methods in the frequentist framework, one can insert the posterior means or modes of the estimates for $\beta_i$ and the variances of $\alpha_j$ and $\varepsilon$ in \eqref{eq:variance_rw}.
+% However, more inference can be made since we have the marginal posterior distribution of each component.
+
+
+
+

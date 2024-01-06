@@ -1,0 +1,11 @@
+In this thesis we aimed to provide a novel Bayesian variable importance measure, the BVI method, for the random intercept model. 
+The BVI method projects the fixed covariates into an uncorrelated space to easy computational efforts. 
+These uncorrelated covariates are used when the model is fit with a Bayesian approach, where we relied upon the INLA framework.
+The fitted model can be used to draw samples from the posterior distribution of the model parameters, which are back-transformed to the original covariate space which is of interest.
+It is in this original covariance space inference is made.
+\newline
+\newline
+From a simulation study we have shown that the BVI method provides results that suggest it provides a proper decomposition and performs well when compared to more established methods in the frequentist framework.
+Further, the BVI method allows for extensive inference through posterior distributions and is implemented in the package \texttt{BayesianImportance} in the statistical software R.
+We lastly outline some desired improvements and extensions of the BVI method, before a Bayesian relative importance framework for the generalized linear mixed models can be accomplished.
+Hopefully, the Bayesian Variable Importance method is the first step towards this goal.

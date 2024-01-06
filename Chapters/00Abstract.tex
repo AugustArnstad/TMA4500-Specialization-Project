@@ -1,0 +1,23 @@
+Statistical inference about the parameters of a model is a fundamental part of statistical analysis. 
+In many applications it is desirable to understand how important each covariate is in explaining the observed response variable.
+By specifying the importance of each variable, researchers gain a better understanding of the complex relationships in the statistical model, thereby improving their knowledge and quality of research.
+Currently, there are several methods that try to deduce the importance of variables in a statistical model.
+These methods include testing a null hypothesis by using parameter estimates, confidence intervals or $p$-values
+This thesis aims to provide a method that decomposes the model variance in a Bayesian framework, to emphasize statistical inference rather than threshold-based, for example regarding a covariate as significant if $p<0.05$, interpretations.
+\newline
+\newline 
+We introduce a Bayesian measure of variable importance, which we call the \textit{Bayesian Variable Importance} (BVI) method. 
+The BVI method adapts the key aspects of established methods for decomposing the variance of a random intercept model, into the Bayesian framework.
+To do this, we use the relative weights method as our starting point.
+The relative weights method, which can be considered an approximation of more computationally exhausting methods, projects correlated covariates into an uncorrelated space.
+In the respective space the Bayesian model is fit, and the results are back-transformed to the original covariate space. 
+The results include posterior distributions for each model covariate and the calculated variance that each covariate contributes to the full model variance. 
+Furthermore, the package \texttt{BayesianImportance} is developed to implement the Bayesian Variable Importance method in the statistical software R.
+\newline 
+\newline 
+From a simulation study it is shown that the Bayesian Variable Importance method provides a computationally fast and proper decomposition of the model variance.
+Analysis on a single, simulated dataset is shown, highlighting the statistical inference one can obtain from the BVI method.
+The results, such as posterior distributions, are discussed in further detail and further work is outlined.
+It is discussed that there are many possibilities with the BVI method going forward and that relative importance in a Bayesian framework is an area where much work can be done in the future. 
+
+

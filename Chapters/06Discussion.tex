@@ -1,0 +1,129 @@
+In this thesis we have presented a novel method for Bayesian variable importance, the BVI method, a new method for calculating relative importance of covariates in random intercept models.
+The BVI method broadens the concept of the extended relative weights (ERW) method to the Bayesian framework, which provides a more computationally feasible method as an alternative to the extended LMG (ELMG) method.
+This extension makes use of the advantageous properties of Bayesian methods that give posterior distributions of each parameter and combines this with the relative weights method \citep{johnson_relative_weights}.
+The relative weights method projects the covariates into an orthogonal space and approximates the design matrix with the projected covariates \citep{johnson_relative_weights,mirsky-theorem} for the linear model and is extended in \citet{matre} to also work for random intercept models.
+Our main inference is done using results from \citep{gelman2017rsquared} and \citet{nakagawa2013general} regarding the $R^2$ for Bayesian linear mixed models.
+After conducting a simulation study, the results show that the BVI method is comparable to both the ERW and ELMG, as well as the more established Relaimpo method. 
+Due to the BVI method's Bayesian nature, we have also presented the sampled posterior distributions of the fixed covariates and the marginal posteriors of the random effects.
+All code used in the implementation of the BVI method and used to produce results is available in GitHub with a link in \Cref{ap:github-repository}. 
+Further, \Cref{ap:bayesian-importance} contains a usage example of the method so that the reader can easily implement the BVI method in their own work.
+\newline
+\newline
+Hopefully, the BVI method can be used as a new tool to help researchers in various fields, which rely upon inference about covariates that try to explain a complex relationship with the response.
+The data often reflects some of this complexity, making it hard to draw conclusions and obtain trustable inference.
+In addition to its usefulness within natural sciences, a Bayesian variable importance measure is a useful tool in itself as an analogue to the established methods, e.g. in \citet{gromping_relaimpo}, for the frequentist framework.
+The key aspect that separates the BVI method from the other methods discussed is the inference it delivers from a single dataset, in the form of the posterior distributions of the relative importances.
+These distributions will presumably allow field experts to make more informed statements about the effect on the response caused by each covariate in a random intercept model, which can further help in their research.
+\newline
+\newline
+As listed in section \Cref{sec:rel_imp}, relative importance measures are compared by a list of criteria, which we consider when evaluating our results while keeping in mind that we are in a Bayesian framework with our model.
+It has been shown that the relative weights method satisfies the proper decomposition, inclusion and non-negativity criteria \citep{matre}.
+In \citet{gromping_relaimpo} it is argued that the exclusion criterion does not appear to always be reasonable, and therefore nor do we consider this criterion to be relevant when assessing our BVI method. 
+The BVI method has shown promising results that in posterior expectation it fulfills the proper decomposition criterion, since the BVI method gives very similar results in the simulation study as the other methods, which have been proven to provide a proper decomposition.
+It could be mentioned that the BVI method sometimes varied more than the established methods.
+We see this a consequence of the inherit uncertainty in the Bayesian framework, which is expected and in our case desirable.
+Further, non-negativity is fulfilled by the BVI method by construction as the relative importances are squared.
+It is noted in \citet{matre} that the ELMG and ERW can theoretically violate the inclusion criterion, however it is seen to be unlikely to happen in practice.
+We have not fully explored the inclusion criterion for the BVI method, but also regard it as unlikely that this criterion will be violated in practice.
+In fact, since we consider distributions in the Bayesian framework rather than point estimates, we think that the results should not be subject to the same strict constraints that the frequentist framework can impose.
+For a small regression coefficient, it should not uncritically be dismissed as a problem if the resulting distribution contains zero. 
+If the posterior importance distribution contains zero, the importance should perhaps be subject to careful interpretation rather than dismissal at first sight.
+One could even argue that the inclusion of zero in the posterior distribution is no problem at all, and regard it as interesting information without any need to perform model selection. 
+The BVI method produces plausible results for the total variance explained and the decomposition of total variance into relative importance of covariates for one dataset.
+Further, it produces very similar results compared to the Relaimpo, ELMG and ERW methods over a simulation study.
+We believe this to be an indication that it provides a proper decomposition, which we consider to be the most important criteria to fulfill.
+A proof of proper decomposition for the BVI method is perhaps only available in expectation, but would nonetheless be of great interest, and hopefully this can be achieved in the future. 
+\newline
+\newline
+In \citet[section 6.1]{matre} it is highlighted that the ERW method can be sensitive to correlation between the fixed covariates, and this causes it to be less trustworthy than the ELMG method.
+As the BVI method utilizes the relative weights transformation on the data, it is to be expected that this same sensitivity is present in the BVI method.
+Even though the difference between the ELMG and ERW was found to be relatively small in \citet{matre}, one could investigate whether the uncertainty carried from the relative weights approximations might negatively affect the desired uncertainty that the BVI method delivers. 
+From the results presented in this thesis, any systematic error from the transformation of data are also believed to be relatively small, as the BVI compares very similarly to both ERW and ELMG.
+\newline
+\newline
+As mentioned the main advantage of relative importance in a Bayesian framework is that the methods provide more information on each predictor thanks to posterior marginals.
+We believe that even though some accuracy is lost in the transformation of data, the BVI method provides a viable analogue to the established methods in the Bayesian framework.
+Since the BVI method is a Bayesian relative importance measure it also allows for incorporating prior knowledge and because of this may prove to be more robust for small sample sizes. 
+The Bayesian framework avoids the many misinterpretations regarding $p$-values mentioned and allows researchers to make more direct probability statements regarding the model.
+The pitfall of a sharp cutoff that the null hypothesis testing with $p$-values are not present, since the model provides posterior distributions rather than point estimates.
+Hopefully, this can lead researchers to make more thoughtful conclusions and not blindly follow a threshold.
+\newline
+\newline
+Going forward, there are some obvious expansions of the BVI method that should be considered.
+The first thing that is to get a better understanding of how the method performs when applied to real data.
+So far, the BVI method has only been tested on simulated data and testing the BVI method with real data might be the next natural step in its development. 
+Testing with real data should be fairly straightforward to execute with a suitable dataset, but it is still necessary to further strengthen the credibility of the BVI method.
+With real data, the challenge of categorical covariates also needs to be addressed. 
+Categorical covariates have been considered out of the scope for this thesis, but, is nonetheless a very important aspect that needs to be explored.
+One possibility could perhaps be to use dummy encoding.
+\newline
+\newline
+Another extension that would be of interest is to investigate the analytic properties of the BVI method. 
+This thesis has mainly been focused on creating a relative importance measure in the Bayesian framework, and to be able to do so within a limited amount of time has required us to not thoroughly dive into analytic results.
+We do believe, based on the promising results presented in this thesis, that some analytic results can be made. 
+Particularly proofs in expectation, which is common in the Bayesian framework, would further underline the consistency of the method. 
+\newline
+\newline
+Furthermore, the random intercept model is just scratching the surface of the much larger field of generalized linear mixed models.
+From the linear model there are essentially two paths to take, either one can introduce random effects and interaction terms (LMM) or one can generalize the linear model (GLM) to not be restricted to a normal response. 
+The BVI method has been implemented with a random intercept, but it would be a great improvement if one could extend the method to also work for random slopes. 
+Random intercepts add variance to the model uniformly across all clusters, but a random slope adds variance to the effects of a specific predictor.
+Therefore, the variance associated from a covariate would be a combination of the fixed effects and the variance across groups coming from the random slopes.
+This not only makes calculations more complicated, but would also require a more sophisticated interpretation of the variable importance.
+No longer could one say that a covariates importance is its overall attribution to the response variable, but also how it varies across different clusters.
+Moreover, adding both random intercepts and random slopes to clusters introduces a covariance structure between the random intercepts and random slopes that would also need to be assessed.
+It would be essential to investigate the effect of correlated random effects, and the implications this poses when trying to obtain a proper variance decomposition.
+These new elements pose obstacles that one would need to overcome in order to create a successful relative importance measure for the LMM's.
+\newline
+\newline
+Going down the other path, the extension to generalized linear models would be a substantial advancement.
+A GLM extension would allow us to also investigate relative importance in non-normal responses, such as the Poisson distribution and the binomial distribution, by linking the expectation of the response to a linear predictor via a link function.
+This also implies that the regression coefficients calculated would be on a different scale, depending on the link function, and further different scales for measuring the model variance. 
+As a consequence one would have to find a way to overcome this transformation imposed by the link function, as well as the constraints on model parameters that non-normal responses require. 
+If a dependable relative importance measure could tackle the challenges of linear mixed models and generalized linear models, this would hopefully pave the way for a combination that can tackle the generalized linear mixed models (GLMM's).
+\newline
+\newline
+At the time being, the author of this thesis is especially interested in testing how the BVI method tackles the animal model \citep{Kruuk2004}, before further exploring its analytical properties and possible extensions.
+This can hopefully be a topic for further investigation in a master thesis and possibly further work. 
+\newline
+\newline
+Variable importance as a field within mathematics is a debated topic, with some authors, including Ehrenberg \citep{Gromping_2015} criticizing the concept itself. 
+The challenges often arise from the recognition that a correct way of allocating unique importances for correlated covariates can never be agreed upon \citep{Gromping_2015}, if a unique definition of variable importance even exists.
+With these considerations in mind, relative importance measures should be seen as a (possibly) useful tool for a statistical model that relies upon assumptions. 
+The insights of relative importance are limited by the statistical model and cannot account for poor model design.
+
+
+% \section{Reliability}
+% \subsection{SVD approximation}
+% \subsection{Transformations}
+% \subsection{INLA challenges}
+% \subsubsection{Skewed precisions}
+% \subsubsection{Precision to variance transforms and draws}
+
+% \section{Data results}
+% \subsection{Interpretations}
+% \subsection{Related work}
+% \subsection{comparison}
+
+%Highlight the advantage of not needing multiple datasets to get a distribution and
+%How this is a fundamental advantage of the bayesian framework!!!!
+
+% \section{Future work}
+% \subsection{Binary/Categorical response variables}
+% \subsection{Design matrix not of full rank}
+% \subsection{Random slopes and extension to GLMM's}
+
+% In practice perfectly uncorrelated covariates is difficult to realize, and the question of which covariates to include in the model is a topic of much discussion which is out of the scope for this thesis.
+% Regardless, there is a need for methods that can handle correlated covariates in a sensible manner as it is difficult to
+
+% Include a section about what should or could be done in future research, or explain any recommended next steps based on the results you got. This should be the last section in the discussion.
+
+
+% This trend is caused by a known shrinkage effect, or shrinkage factor, \citep[pages~354-355]{GLMM_book} and can be contextualized in a bayesian setting as "the ad hoc estimate ... for $gamma_i$ is shrunken towards the prior mean $0$"\citep[page~355]{GLMM_book}.
+% As mentioned in \citet{matre}, having a model that captures and takes this shrinkage factor into account is desirable and the difference between the theoretically correct importance and the estimate is expected.
+
+
+% When the fixed effects are positively correlated, the total variance of the model increases as shown in \eqref{eq:variance_theoretical}. 
+% This increase is only due to the fixed effects so it is both desirable and expected to see the methods capture this increase in the total variance explained.
+
+% The larger width of the BVi might be due to the natural uncertainty of Bayesian framework?

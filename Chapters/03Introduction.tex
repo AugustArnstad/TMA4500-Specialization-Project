@@ -1,0 +1,133 @@
+% \begin{itemize}
+%     \item Intro basic ((predictors and regressors bear the same meaning and are used interchangeably))
+%     \item p-values
+%     \item $R^2$ coefficient
+%     \item Naive approaches 
+%     \item Presenting established methods (LMG, PMVD, RW)
+%     \item Bayesian framework and its usage in natural sciences 
+%     \item What we want to accomplish
+%     \item R-package 
+%     \item Rough outline of thesis
+% \end{itemize}
+Statistical models that aim to model a response from a set of covariates can be very useful in various fields, if interpreted properly.
+To be able to interpret the models correctly, it is often of interest to decide on what covariates that provide statistical evidence \citep{muff2022rewriting} for the response. 
+Determining statistical evidence and quantifying the proportion of variance a covariate explains in the response is no trivial task, which has been and still is a wide topic applicable to many sciences.
+The term \textit{statistical evidence} is suggested as an alternative to the more popular term \textit{statistical significance} based on the pitfalls that the term statistical significance impose.
+\newline
+\newline 
+Arguably the historically most prominent way of deciding whether or not a covariate is statistically significant is the $p$-value, which was made widespread by Ronald Fisher \citep{Fisher1925}.
+The $p$-value is calculated by performing a hypothesis test on the covariates regression coefficient, which tests the null hypothesis that the regression coefficient is zero against the alternate hypothesis that the regression coefficient is different from zero.
+The result of the hypothesis test is determined by comparing the $p$-value to a significance level $\alpha$, frequently set to be $\alpha=0.05$.
+If the $p$-value is lower than $\alpha$ one rejects the null hypothesis and claims that the regression coefficient is not zero and therefore the covariate is statistically significant in explaining the response, and vice versa if the $p$-value is larger than $\alpha$.
+Following \citet{Goodman2008}, the $p$-value is defined as $\mathbb{P}(X \geq x \lvert H_0)$, where $H_0$ is the null hypothesis, $X$ is some statistic of the random variable, e.g. mean or variance, and is itself a random variable while $x$ is the observed value of this statistic from the data.
+This definition can be written in words as \textit{The probability of the observed, or a more extreme, result, if the null hypothesis were true} \citep{Goodman2008}.
+\newline
+\newline
+Although the $p$-value is such a popular tool for determining hypothesis tests, this method of determining statistical significance is subject to much criticism. 
+Some of the criticism addresses that the $p$-value is often highly misinterpreted, as in \citet{Goodman2008} where twelve misconceptions regarding the $p$-value is discussed.
+Another line of criticism points to the rigid way of deciding statistical significance. 
+Once a significance level $\alpha$ is chosen, statistical significance is determined in a binary way, based on $\alpha$.
+If the $p$-value is calculated to be smaller than $\alpha$ we say that the covariate is statistically significant and vice versa. 
+This way of concluding can lead to inflation bias, also known as $p$-hacking \citep{HeadHolman_2015}, which is the phenomenon of researchers testing "several statistical analyses and/or data eligibility specifications"\citep{HeadHolman_2015}, that give significant results based of the $p$-value and report only these results.
+In this sense, one can $p$-hack and eventually obtain significance with respect to $p$-values for almost any covariate, significant or not \citep{Simmons_significance}.
+% The first of the twelve misconceptions is stated as \textit{If $p=0.5$, the null hypothesis has only a $5$\% chance of being true}, which can lead one to believe that the likelihood of concluding correctly or falsely can be attributed to the data \citep{Goodman2008}.
+% This cannot be the case, as the $p$-value is calculated by assuming the null hypothesis to be true, and therefore cannot be a measure of the probability that the null hypothesis is false. 
+% Further, another misconception based on the $p$-value that may confuse researchers, is the idea tha \textit{A statistically significant finding is clinically important} \citep{Goodman2008}. 
+% This can be disproven by realising that the $p$-value does not tell us anything about the magnitude of the statistical significance. 
+% It may very well be that we calculate a $p$-value that disagrees with the null-hypothesis, but the magnitude of the covariate is too small to be considered clinically important.
+% \newline
+% \newline
+% Another line of criticism points to the rigid way of deciding statistical significance. 
+% Once a significance level $\alpha$ is chosen, statistical significance is determined in a binary way, based on $\alpha$.
+% If the $p$-value is calculated to be smaller than $\alpha$ we say that the covariate is statistically significant and vice versa. 
+% This way of concluding can lead to inflation bias, also known as $p$-hacking \citep{HeadHolman_2015}, which is the phenomenon of researchers testing "several statistical analyses and/or data eligibility specifications"\citep{HeadHolman_2015}, that give significant results based of the $p$-value and report only these results.
+% In this sense, one can $p$-hack and eventually obtain significance with respect to $p$-values for almost any covariate, significant or not \citep{Simmons_significance}.
+% \newline
+% \newline
+% Despite the abundant criticism of determining significance based solely on $p$-values, we do not dismiss the valuable information that a $p$-value contains.
+% According to \citet{Goodman2008}, Fisher initially inteded the interpretation of a $p$-value below the significance level to be treated as a "worthy of attention", rather than rigourous evidence that disputes the null hypothesis.
+% Therefore, we do not wish to exlude the $p$-value in research, rather state that one should not misinterpret the $p$-value and realise that the information it carries is limited. 
+\newline
+\newline
+Despite the abundant criticism of determining significance based solely on $p$-values, we do not dismiss the valuable information that a $p$-value contains. 
+Rather, the focus should be on supplementing the $p$-value with methods that provide more insight into how well the covariates explain the response.
+Instead of determining if a covariate provides evidence or no evidence, it can be preferred to determine the proportion of variance that a covariate explains in the response.
+By not deciding on the binary outcome evidence or no evidence, and instead referring to predictable variance \citep{johnson_relative_weights} from the covariates, the interpretations become less rigid and less prone to misinterpretations.
+This proportion of variance is commonly called the \textit{relative importance} of the covariate and some commonly used tools to quantify the relative importances of covariates are  
+\begin{enumerate}[i]
+    \item \textbf{Effect sizes:} An intuitive approach is to look at the size of the regression coefficients, more specifically the squared value of the standardized regression coefficients. This is useful to get a comparable measure between covariates if they are independent, but if the covariates are correlated the uncertainty in coefficient estimates are heavily affected. 
+    Therefore, the results become hard to trust and correct interpretations are difficult to obtain. %as the correlation might increase or decrease the regression coefficient in a fashion that is troublesome to interpret.
+    \item \textbf{Confidence intervals:} Given that we have estimated the effect size of a covariate, it would be reasonable to create a confidence interval for the estimate. The confidence interval would give us a range of effect sizes that can be evaluated as statistically consistent with the data. 
+    The problem with confidence intervals is that the standard procedure for calculating them has its foundation in the $p$-value, so relying on a confidence interval would effectively be the same as relying on a $p$-value.
+    \item \textbf{Information criteria:} A popular variable selection tool in regression models are information criteria such as AIC \citep{Akaike_AIC} and BIC \citep{Schwarz_BIC}, that can even be used to compare non-nested models. 
+    Both the AIC and BIC provide a natural measure for the unique information contained in one covariate, but that does not account for information shared between correlated covariates, making it hard to interpret the result in this case.
+    \item \textbf{Methods decomposing the $R^2$:} The $R^2$ value is a measure of the variance in the response explained by the statistical model. It is a very popular and intuitive measure of model fit, so if one can find a reasonable decomposition of the $R^2$ in terms how much the covariates contribute to it, this would be easy for the many researches already familiar with $R^2$ to interpret.
+    The decomposition of the $R^2$ value could be done in several ways, for example by looking at the $R^2$ of the model containing only the covariate of interest, or the difference in $R^2$ when adding the covariate of interest to a model with multiple covariates. Once more correlated covariates can pose challenges when interpreting the results, so a decomposition of the $R^2$ must properly account for correlated covariates.
+\end{enumerate}
+All the above methods for determining the importance of covariates to a response can be misleading if correlation between covariates is present.
+As a consequence, a measure of relative covariate importance that can accurately address the difficulty of correlated covariates and at the same time being intuitive enough to become widespread, is needed.
+\newline 
+\newline
+The topic of relative variance importance has been subject to a lot of academic work from different perspectives \citep{gromping_relaimpo,johnson_relative_weights}. 
+One line of thinking is proposed by \citet{Lindeman1980} which focuses on decomposing the $R^2$ by assessing models containing different subsets of the covariates.
+The method, commonly named LMG after the authors, considers all possible orderings of how covariates are added to the null model and then finds the mean increase of $R^2$ for each covariate.
+Averaging over orderings is common practice in statistics to reduce variance, so the LMG has established itself as a robust method. 
+Multiple extensions of the LMG has been proposed, including into fields as dominance analysis \citep{budescu1993dominance} and game theory \citep{Lipovetsky_GameTheory} where it is deduced the LMG method and the Shapley value \citep{Shapley1953StochasticG} are equivalent.
+The downside to averaging over orderings is the computational complexity imposed when the orderings are many, since this requires a great number of permutations.
+\newline
+\newline
+To address the computational complexity of the LMG method, another approach is to project correlated covariates in to an orthogonal space, use the effect size of covariates in this space and then transform them back onto the correlated covariates.
+The projection of the original covariates involves well known matrix approximation techniques and in the orthogonal space the problem reduces as the correlation is no longer present.
+This approach has been proposed, and improved, independently by multiple scientists \citep{johnson_minimization_trace, Fabbris1980, Genizi_relative_weights,johnson_relative_weights}, and will be called the relative weights (RW) method going forward.
+The relative weights method can be seen as an approximation of the LMG method which dramatically reduces the complexity, and "might be the method of choice"\citep{Gromping_2015} if the LMG method is not computationally feasible.
+\newline
+\newline
+A feature that is absent in both the LMG and the relative weights method, is the ability to handle random effects and non-normal responses.
+Very often, a linear regression model is not sufficient to explain all the information researchers have at their disposal.
+The data gathered by researchers often contain natural groupings, which can be implemented with a linear mixed model (LMM) as random intercepts or random slopes.
+Further, the response might be better modelled using a non-normal distribution which can be done by using a generalized linear model (GLM) instead of the standard linear regression.
+So far an effort to extend the LMG and the RW method to handle random intercepts has been done \citep{matre} and this effort provides a useful extension.
+Developing methods capable of handling random slopes and non-normal responses are therefore strongly desirable in the future, as this would help researchers interpret a greater scope of statistical models.
+% \newline 
+% \newline
+% Another line of thinking is proposed by \citet{Lindeman1980} which focuses on decomposing the $R^2$ by assessing models containing different subsets of the covariates.
+% The method, commonly named LMG after the authors, consideres all possible orderings of how covariates are added to the null model and then finds the mean increase of $R^2$ for each covariate.
+% Averaging over orderings is common practic in statistics to reduce variance, so the LMG has established itself as a robust method. 
+% Multiple extensions of the LMG has been proposed, including into fields as dominance analysis \citep{budescu1993dominance} and game theory \citep{Lipovetsky_GameTheory} where it is deduced the LMG method and the Shapley value \citep{Shapley1953StochasticG} are equivalent.
+% The downside to averaging over orderings is the computational complexity imposed when the orderings are many.
+% Since the relative weights method can be considered an approximation of the LMG method, \citet{Gromping_2015} states that the relative weights method "might be the method of choice" if the LMG method is not feasible.
+\newline
+\newline 
+Moreover, both the LMG and the relative weights method are methods for calculating relative importance in a frequentist framework. 
+However, in recent years the advancements made in computational techniques, such as INLA, has lead to an increased interest for the unique possibilities within the Bayesian framework as described in \citet{mcelreath2020statistical}.
+The Bayesian framework deals with distributions rather than point estimates and therefore presents a fundamental variance, or uncertainty, in these distributions.
+This allows researchers to interpret findings with respect to a distribution with some variance, rather than a single point estimate.
+Consequently, Bayesian methods are increasingly popular \citep{hackenberger2019bayes} and can provide attractive alternatives for improving clinical trials \citep{lee2012bayesian}.
+For these reasons, we argue that a robust and trustworthy relative importance measure in the Bayesian framework is desirable in the same way as its frequentist counterpart.
+Furthermore, it would be strongly desirable with a Bayesian analogy to the LMG and RW method that is suited to properly address random effects and non-normal responses.
+\newline
+\newline
+This thesis will consider the resources outlined above as well as extensions that have been proposed \citep{matre}, and with this basis try to put forward an analogous relative importance measure in the Bayesian framework.
+For the time being this relative importance measure will be compatible with random intercepts and can hopefully be further extended in the future.
+Mainly focusing on the relative weights method, we will combine this method with the integrated nested Laplace approximation(INLA) technique.
+This will allow us to interpret the results from a Bayesian perspective and see how it compares to more established methods from the frequentist framework.
+The implementation of this Bayesian relative importance analogy will be done in R, where an R package will be developed.
+Our hopes are that this R package, along with instructions on its usage, will be easy for researchers to use and give insightful information into their research.
+This R package can be found at \url{https://github.com/AugustArnstad/BayesianImportance}.
+\newline 
+\newline 
+To begin, \Cref{ch:theory} will present necessary theory regarding the regression models considered and relative importance measures. 
+In \Cref{ch:method} the methodology for how we develop our importance measure and conduct a simulation study is put forth, and the accompanying results are given in \Cref{ch:results}.
+The empirical results and general considerations are discussed in \Cref{ch:discussion}, where also further work is outlined, and the following conclusion is found in \Cref{ch:conclusion}.
+Lastly, appendices A and B contain the GitHub repository in which the R package was built and an example of its usage respectively.
+
+
+
+% To be able to gain more insight one can evaluate the proportion of variance in the response explained by the covariates in the model, often called the $R^2$.
+% The $R^2$ value is a very frequently used measure of model fit, which has become popular due to its intuitive nature.
+% Since 
+
+
+% Further,  often named the \textit{importance} of a covariate.
+
+% As alternatives to assess the statistical significance, or importance, of covariates in a statistical model, a wide variety of tools for model interpretation has been proposed.
