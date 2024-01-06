@@ -239,7 +239,7 @@ This iterative process gives rise to the general formula for share of explained 
     \text{LMG}(1) = \frac{1}{p!} \sum_{S \subseteq \{2, ..., p\}} n(S)! (p - n(S)-1)! \text{svar}(\{1\} \lvert S) \ ,
 \end{equation} 
 where $n(S)$ is the number of regressors in $S$.
-Equation \eqref{eq:LMG} averages the increase in $R^2$, $\text{svar}(\{X_i\})$ when adding the covariate of interest, $X_i$, over all possible orderings of covariates. 
+Equation \eqref{eq:LMG} averages the increase in $R^2$, $\text{svar}(\{X_i\})$, when adding the covariate of interest, $X_i$, over all possible orderings of covariates. 
 This mean increase over orderings is assigned as the proportion of $R^2$ explained by $X_i$.
 The LMG method fulfills all but the exclusion criteria described previously \citep{gromping_relaimpo}, but \citet{gromping_relaimpo} argues that this "must be seen as a natural result of model uncertainty" and therefore that this criterion is not indispensable.
 Therefore, we find it also suitable for our purposes to focus on the three other criteria.
@@ -300,15 +300,15 @@ The relative weights method will be considered later on, when we use the transfo
 The $R^2$ value introduced earlier refer to a linear regression setting, and so it is desirable to obtain an analogous value for random effect models.
 When extending a model to include random effects, one must decide whether one also wants to account for the variance explained by these random effects in the calculations of the $R^2$ value.
 A simple and intuitive way is presented in \citet{nakagawa2013general}. To ease notation we write, $\sigma^2_f = \boldsymbol{\beta}^T \boldsymbol{\Sigma_{\mathbf{X^TX}}}\boldsymbol{\beta}$ for the variance captured by the fixed effects. Similarly we write $\sigma_{\alpha}^2$ for the total variance of random effects and $\sigma^2_{\varepsilon}$ for the variance of the random error. 
-The proposed definition of the conditional $R^2$ for LMM's is then
-\begin{equation}
-    R^2_{\text{cond}} = \frac{\sigma^2_f + \sigma^2_{\alpha}}{\sigma^2_f + \sigma^2_{\alpha} + \sigma^2_{\varepsilon}} \ ,
-    \label{eq:R2_LMM_conditional}
-\end{equation}
-and similarly for the marginal $R^2$ we have
+The proposed definition of the marginal $R^2$ for LMM's is then
 \begin{equation}
     R^2_{\text{marg}} = \frac{\sigma^2_f}{\sigma^2_f + \sigma^2_{\alpha} + \sigma^2_{\varepsilon}} \ .
     \label{eq:R2_LMM_marginal}
+\end{equation}
+and similarly for the conditional $R^2$ we have
+\begin{equation}
+    R^2_{\text{cond}} = \frac{\sigma^2_f + \sigma^2_{\alpha}}{\sigma^2_f + \sigma^2_{\alpha} + \sigma^2_{\varepsilon}} \ ,
+    \label{eq:R2_LMM_conditional}
 \end{equation}
 
 \subsection{Extensions of the LMG and relative weights method}
@@ -319,7 +319,7 @@ From this decomposition, the only extension needed for the LMG formula is to inc
 \begin{equation}
     \text{LMG}(1) = \frac{1}{(p+q)!} \sum_{S \subseteq \{2, ..., p\}} n(S)! ((p+q) - n(S)-1)! \text{svar}(\{1\} \lvert S) \ ,
 \end{equation}
-where $p$ denote fixed effects and $q$ denotes random effects. It is equivalent to the original LMG method (\eqref{eq:LMG}) except that here the random intercepts are treated as categorical fixed effects, where we do not consider the columns but rather the whole predictor, either completely in the model or not.
+where $p$ denote fixed effects and $q$ denotes random effects. It is equivalent to the original LMG method \eqref{eq:LMG} except that here the random intercepts are treated as categorical fixed effects, where we do not consider the columns but rather the whole predictor, either completely in the model or not.
 \newline
 \newline
 To create the extended relative weights (ERW) method, \citet{matre} uses the same transformation of data as for the relative weights method to project the covariates into an orthogonal space. 
@@ -425,9 +425,9 @@ and
     \label{eq:R2_bayes_LMM_marg}
     R_{s, \text{cond}}^2 = \frac{\boldsymbol{\beta}_s^T \boldsymbol{\Sigma_{\mathbf{X^TX}}}\boldsymbol{\beta}_s + \sigma_{\alpha, s}^2}{\boldsymbol{\beta}_s^T \boldsymbol{\Sigma_{\mathbf{X^TX}}}\boldsymbol{\beta}_s + \sigma_{\alpha, s}^2 + \sigma_{\varepsilon, s}^2} \ ,
 \end{equation}
-where the subscript $s$ denotes samples from the marginal posteriors of the parameters in question, \textit{i.e.} $\boldsymbol{\beta}, \sigma_{\boldsymbol{\alpha}}^2$ and $\sigma_{\varepsilon}^2$.
+where the subscript $s$ denotes samples from the marginal posteriors of the parameters in question, \textit{i.e.} $\boldsymbol{\beta}, \sigma_{\alpha}^2$ and $\sigma_{\varepsilon}^2$.
 These definitions of the $R^2$ highlight exactly the fundamental advantage of the Bayesian framework. Since the $R^2$ is also treated as a random variable, it has a distribution which can be used for statistical inference. 
-Moreover, one can relate the $R^2$ more directly to the frequentist framework by using the posterior means or modes from the distributions of $\boldsymbol{\beta}, \sigma_{\boldsymbol{\alpha}}^2$ and $\sigma_{\varepsilon}^2$ in \eqref{eq:R2_LMM_conditional} and \eqref{eq:R2_LMM_marginal}. This approach can be favorable for comparing methods.
+Moreover, one can relate the $R^2$ more directly to the frequentist framework by using the posterior means or modes from the distributions of $\boldsymbol{\beta}, \sigma_{\alpha}^2$ and $\sigma_{\varepsilon}^2$ in \eqref{eq:R2_LMM_conditional} and \eqref{eq:R2_LMM_marginal}. This approach can be favorable for comparing methods.
 
 \section{The INLA framework}
 \label{sec:INLA_framework}

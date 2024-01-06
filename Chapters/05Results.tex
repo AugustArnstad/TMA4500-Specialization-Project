@@ -157,7 +157,7 @@ In general, the BVI method is in agreement with the theoretical results for unco
 \subsection{Relative importance of the random effects}
 \label{sec:relimp_random}
 Considering a model with one random intercept, we can no longer compare our model with the Relaimpo method, which is only implemented for the linear regression in the relaimpo R package \citep{gromping_relaimpo}. Therefore, we now compare the BVI method only with the ELMG and ERW methods, which have been extended from the Relaimpo method \citep{matre}.
-\Cref{fig:relimp_alpha} shows the distribution of the relative importance assigned to the random intercept $\boldsymbol{\alpha}$ for different correlation levels. 
+\Cref{fig:relimp_alpha} shows the distribution of the relative importance, or variance, assigned to the random intercept $\boldsymbol{\alpha}$ for different correlation levels. 
 The random intercept $\boldsymbol{\alpha}$ follows a univariate normal distribution with variance equal to $1/8$ and the standard deviation of the response is $\sigma^2_{\mathbf{y}}=1$. 
 As before the horizontal line shows the theoretical relative importance that $\boldsymbol{\alpha}$ has in the model when the fixed effects are uncorrelated.
 \newline
@@ -169,7 +169,7 @@ To re-emphasize, this is both expected and desirable since the increase in respo
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.7\linewidth]{Figures/ViolinPlots/Variance_gamma.png}
-  \caption{Violin plots for the relative importance of the random effect $\boldsymbol{\alpha}$, that is, $\hat{\sigma}^2_{\boldsymbol{\alpha}}$ for different correlation levels calculated from the ensemble of simulated datasets by the BVI, ELMG and the ERW method. For the BVI method the distributions of posterior means of the marginal distribution of $\hat{\sigma}^2_{\boldsymbol{\alpha}}$ are shown to compare to the point estimates of the other two methods. The horizontal line displays the theoretically correct importance $\sigma^2_{\boldsymbol{\alpha}} = 0.125$ of the random effect in the case of uncorrelated data.}
+  \caption{Violin plots for the relative importance of the random effect $\boldsymbol{\alpha}$, that is, $\hat{\sigma}^2_{\alpha}$ for different correlation levels calculated from the ensemble of simulated datasets by the BVI, ELMG and the ERW method. For the BVI method the distributions of posterior means of the marginal distribution of $\hat{\sigma}^2_{\alpha}$ are shown to compare to the point estimates of the other two methods. The horizontal line displays the theoretically correct importance $\sigma^2_{\alpha} = 0.125$ of the random effect in the case of uncorrelated data.}
   \label{fig:relimp_alpha}
 \end{figure}
 
@@ -199,17 +199,17 @@ The centering of the distributions for both the marginal and conditional varianc
     \includegraphics[width=0.6\linewidth]{Figures/ViolinPlots/Conditional_Variance.png}
     \label{fig:variance_conditional}
   }
-  \caption{Violin plots for the total marginal and conditional variance explained for different correlation levels calculated from the ensemble of simulated datasets by the BVI, ELMG, the ERW and the Relaimpo method(only marginal variance explained can be computed). For the BVI method the posterior means of the sampled posterior distributions of $\boldsymbol{\beta}$ and the marginal distribution of $\hat{\sigma}^2_{\boldsymbol{\alpha}}$ in each simulation are used to compare to the point estimates of the other two methods. The horizontal lines display the theoretical explained variance for each correlation level $\rho$ as in \Cref{table:1}.}
+  \caption{Violin plots for the total marginal and conditional variance explained for different correlation levels calculated from the ensemble of simulated datasets by the BVI, ELMG, the ERW and the Relaimpo method(only marginal variance explained can be computed). For the BVI method the posterior means of the sampled posterior distributions of $\boldsymbol{\beta}$ and the marginal distribution of $\hat{\sigma}^2_{\alpha}$ in each simulation are used to compare to the point estimates of the other two methods. The horizontal lines display the theoretical explained variance for each correlation level $\rho$ as in \Cref{table:1}.}
   \label{fig:total_variance}
 \end{figure}
 
 \newpage
 \section{The BVI method}
-The results from the BVI method for each dataset consists of the posterior marginal distributions for $\boldsymbol{\alpha}$ and $\boldsymbol{\varepsilon}$, as well as the approximated distribution of $\text{RI}(\mathbf{X})$ from samples $\boldsymbol{\beta}_{s, \mathbf{Z}}$ drawn from the joint posterior distribution $\pi(\boldsymbol{\beta}_{\mathbf{Z}}, \boldsymbol{\alpha}, \boldsymbol{\varepsilon} \lvert \mathbf{y})$.
+The results from the BVI method for each dataset consists of the posterior marginal distributions of the variances of $\boldsymbol{\alpha}$ and $\boldsymbol{\varepsilon}$, as well as the approximated distribution of $\text{RI}(\mathbf{X})$ from samples $\boldsymbol{\beta}_{s, \mathbf{Z}}$ drawn from the joint posterior distribution $\pi(\boldsymbol{\beta}_{\mathbf{Z}}, \hat{\sigma}^2_{\alpha}, \hat{\sigma}^2_{\varepsilon} \lvert \mathbf{y})$.
 The derivation of these results are described in detail in \Cref{sec:BVI_handling} and provides a more informative basis to make inference on compared to point estimation.
 As this is the key advantage of the Bayesian framework, we also take a look on what results our method provides for a single model fit for different correlation levels. 
 We calculate these posterior distributions for the same four different correlation levels as we use in the simulation study.
-Further, we use the samples $\boldsymbol{\beta}_{s, \mathbf{Z}}$ from the joint distribution and the marginals of $\boldsymbol{\alpha}$ and $\boldsymbol{\varepsilon}$ to calculate the distribution of $R^2$ in accordance with \eqref{eq:R2_bayes_LMM_cond} and \eqref{eq:R2_bayes_LMM_marg}. 
+Further, we use the samples $\boldsymbol{\beta}_{s, \mathbf{Z}}$ from the joint distribution and the marginal posterior variances of $\boldsymbol{\alpha}$ and $\boldsymbol{\varepsilon}$ to calculate the distribution of $R^2$ in accordance with \eqref{eq:R2_bayes_LMM_cond} and \eqref{eq:R2_bayes_LMM_marg}. 
 
 \subsection{Posterior relative importance distributions}
 \label{sec:posterior_distributions}
@@ -219,9 +219,9 @@ All posteriors for one correlation level are shown in the same subplot, with one
 For the correlation level $\rho=0$ the theoretically correct relative importances are shown as vertical lines.
 Note here that it is expected and desired that the distributions from a single dataset are stochastic and therefore deviate somewhat from the theoretical values.
 When data are uncorrelated (\Cref{fig:posteriors_none}) the posterior distributions are coincidentally centered close to the theoretical value.
-The posterior distribution of $\boldsymbol{\alpha}$ is slightly skewed to the left and demonstrates a distinctively larger degree of dispersion than the other effects.
-For $\rho=0.1$ (\Cref{fig:posteriors_low}), a small shift of all posterior distributions is noticeable, in accordance with the results from \Cref{fig:relimp_fixed} and \Cref{fig:relimp_alpha}. 
-This repositioning is more clear for $\rho=0.5$ and $\rho=0.9$ (\Cref{fig:posteriors_medium} and \Cref{fig:posteriors_high}), and it is clear to see that the posterior distribution of $\boldsymbol{\alpha}$ follows the trend of $\boldsymbol{\varepsilon}$ closely.
+The posterior distribution of $\hat{\sigma}^2_{\alpha}$ is slightly skewed to the left and demonstrates a distinctively larger degree of dispersion than the other effects.
+For $\rho=0.1$ (\Cref{fig:posteriors_low}), a small shift of all posterior distributions is noticeable, in accordance with the results from \Cref{fig:relimp_X1} and \Cref{fig:relimp_alpha}. 
+This repositioning is more clear for $\rho=0.5$ and $\rho=0.9$ (\Cref{fig:posteriors_medium} and \Cref{fig:posteriors_high}), and it is clear to see that the posterior distribution of the variance of $\hat{\sigma}^2_{\alpha}$ follows the trend of $\hat{\sigma}^2_{\varepsilon}$ closely.
 When correlation is increased, it seems that the width of all posterior distributions narrow and become tighter.
 The trend of increasing relative importance assigned to $X_1$ and $X_2$ while decreasing importance assigned to $X_3$ is highlighted by the posterior distributions of the respective effects as they align closer for each increase in correlation.
 These are the types of results that we would expect to see, as they deviate from the theoretical values with a plausible amount when considering that they are stochastic.
@@ -247,7 +247,7 @@ These are the types of results that we would expect to see, as they deviate from
     \label{fig:posteriors_high}
   }
 
-  \caption{Posterior distributions for fixed effects and posterior marginal distributions for random effects from the BVI method on four randomly simulated datasets with different correlation values between the fixed effects. The blue and purple densities are the marginal posteriors for $\boldsymbol{\alpha}$ and $\boldsymbol{\varepsilon}$ respectively, whereas the red, yellow and green densities are the sampled posteriors for $X_1, X_2$ and $X_3$ respectively. The vertical lines in (a) represent the theoretically correct relative importances.}
+  \caption{Posterior distributions for fixed effects and posterior marginal distributions for random effects from the BVI method on four randomly simulated datasets with different correlation values between the fixed effects. The blue and purple densities are the marginal posteriors for $\hat{\sigma}^2_{\alpha}$ and $\hat{\sigma}^2_{\varepsilon}$ respectively, whereas the red, yellow and green densities are the sampled posteriors for $X_1, X_2$ and $X_3$ respectively. The vertical lines in (a) represent the theoretically correct relative importances.}
   \label{fig:posterior_distributions}
 \end{figure}
 \subsection{Posterior $R^2$ distributions}
