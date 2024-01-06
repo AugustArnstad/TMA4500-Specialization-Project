@@ -23,7 +23,7 @@ The variance decomposition of the random intercept model takes the form
 \end{equation}
 where $\mathbf{U}$ is now a sparse block matrix where each block $\mathbf{U}_j \in \mathbb{R}^{n_j \times q}$ is a matrix of ones, $n_j$ the number of observations in cluster $j$, $q$ the number of random intercepts and $\mathbf{G}$ is a blockdiagonal matrix with $\mathbf{Q}$ on the diagonal.
 In the special case of an independent and identically distributed (iid) random intercept model, this variance decomposition can be simplified.
-With several, independent random intercepts, each intercept $\boldsymbol{\alpha}_j$ contributes $\sigma^2_{\alpha_j}$ to the total model variance, making $\mathbf{G}$ a diagonal matrix, so the total variance of the model can be decomposed as
+With several independent random intercepts, each intercept $\boldsymbol{\alpha}_j$ contributes $\sigma^2_{\alpha_j}$ to the total model variance, making $\mathbf{G}$ a diagonal matrix, so the total variance of the model can be decomposed as
 \begin{equation}\label{eq:variance_theoretical_x}
     \text{Var}(\mathbf{y}) = \sum_{i=1}^p \beta_{i, \mathbf{X}}^2 v_{i, \mathbf{x}_i} + 2 \sum_{i=1}^p \sum_{k=i+1}^p \beta_{i, \mathbf{X}}\beta_{k, \mathbf{X}}\sqrt{v_{i, \mathbf{x}_i}v_{k, \mathbf{x}_k}}\rho_{ik} + \sum_{j=1}^q \sigma^2_{\alpha_j} + \sigma^2_{\epsilon} = 1 \ ,
 \end{equation}
@@ -47,7 +47,7 @@ Since the response is standardized the relative importance, or proportion of var
 \label{sec:BVI_handling}
 Once $\mathbf{Z}$ has been created from the projection of $\mathbf{X}$ into the orthogonal space, a model of the response, which has the form as explained in \Cref{sec:LMM}, is fit using $\mathbf{Z}$ as the design matrix and INLA. 
 INLA is our preferred computational tool to fit the Bayesian LMM since it is very efficient, especially for large data sets and complex models.
-After the model is fit, INLA provides the approximate marginal posterior distribution of each component in $\boldsymbol{\beta}_{\mathbf{Z}}$, the precision of $\boldsymbol{\alpha}$, the precision of $\boldsymbol{\varepsilon}$ and allows us to sample from the joint posterior distribution $\pi(\boldsymbol{\beta}_{\mathbf{Z}}, \boldsymbol{\alpha}, \boldsymbol{\varepsilon} \lvert \mathbf{y})$. 
+After the model is fit, INLA provides the approximate marginal posterior distribution of each component in $\boldsymbol{\beta}_{\mathbf{Z}}$, the precision of $\boldsymbol{\alpha}$, the precision of $\boldsymbol{\varepsilon}$ and allows us to sample from the joint posterior distribution $\pi(\boldsymbol{\beta}_{\mathbf{Z}}, \hat{\sigma}^2_{\alpha}, \hat{\sigma}^2_{\varepsilon} \lvert \mathbf{y})$. 
 Since each random intercept and the random errors are assumed to be iid, the marginal distributions of the precisions represent the full distributions of the precisions. 
 The respective distributions are then inverted, so that they correspond to the distribution of the variances for $\boldsymbol{\alpha}$ and $\boldsymbol{\varepsilon}$. 
 Since the response is standardized, these variance distributions correspond to a distribution of the proportion of variance explained by each random intercept, i.e. a distribution of their relative importance.
@@ -59,7 +59,7 @@ Using INLA functionality, for a sample $\boldsymbol{\beta}_{s, \mathbf{Z}}$ from
 \end{equation}
 where, $\text{RI}(\mathbf{X})_s$ is a column vector where entry $j$ is the estimate of the relative importance of column $j$ in $\mathbf{X}$ from the sample $\boldsymbol{\beta}_{s, \mathbf{Z}}$.
 By repeating this process for multiple samples, one can obtain an estimate of the posterior distribution of each element in $\text{RI}(\mathbf{X})$.
-From the estimated posterior distribution of elements in $\text{RI}(\mathbf{X})$ and the marginal distributions of $\boldsymbol{\alpha$ and $\boldsymbol{\varepsilon}}$ we can obtain the model $R^2$ distribution in the Bayesian framework as described by equations \eqref{eq:R2_bayes_LMM_cond} and \eqref{eq:R2_bayes_LMM_marg}.
+From the estimated posterior distribution of elements in $\text{RI}(\mathbf{X})$ and the marginal variance distributions of $\boldsymbol{\alpha$ and $\boldsymbol{\varepsilon}}$ we can obtain the model $R^2$ distribution in the Bayesian framework as described by equations \eqref{eq:R2_bayes_LMM_cond} and \eqref{eq:R2_bayes_LMM_marg}.
 The advantage of having the posterior distributions instead of point estimates is prominent in natural sciences where one might have complex data structures, since it carries a fundamental uncertainty.
 % I dont know where to place the above sentence, but I think it is important to mention!!!!!!
 
