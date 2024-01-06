@@ -250,6 +250,7 @@ These are the types of results that we would expect to see, as they deviate from
   \caption{Posterior distributions for fixed effects and posterior marginal distributions for random effects from the BVI method on four randomly simulated datasets with different correlation values between the fixed effects. The blue and purple densities are the marginal posteriors for $\hat{\sigma}^2_{\alpha}$ and $\hat{\sigma}^2_{\varepsilon}$ respectively, whereas the red, yellow and green densities are the sampled posteriors for $X_1, X_2$ and $X_3$ respectively. The vertical lines in (a) represent the theoretically correct relative importances.}
   \label{fig:posterior_distributions}
 \end{figure}
+\newpage
 \subsection{Posterior $R^2$ distributions}
 From the above discussed posterior distributions, the posterior distributions of marginal (\Cref{fig:marginal_R2}) and conditional (\Cref{fig:conditional_R2}) variance explained, \textit{i.e.} $R^2$, can also be obtained.
 As was the case for the posterior distributions of fixed and random effects, the $R^2$ distributions are also desired to possess a degree of stochasticity causing them to deviate moderately from the theoretical value.
@@ -261,6 +262,7 @@ The width of the distributions seem to narrow as correlation levels increase, as
 Moving on to the conditional $R^2$ (\Cref{fig:conditional_R2}), which are displayed on the same scale as the marginal $R^2$, it is obvious that these distributions are tighter than the marginal $R^2$ distributions.
 The scale is arguably too large to be used to display the conditional $R^2$ when one sees how narrow they are, but we chose to do so because of the comparison to the marginal $R^2$.
 To the contrary, for $\rho=0.1$ and $\rho=0.9$ the distributions are skewed to the right. 
+The marginal and conditional $R^2$ for the same model will be closely related so one should expect to see the same behaviour in both, as we do.
 \newline
 \newline
 The posterior distributions of $R^2$ reflect our expectations as they exhibit the same stochasticity as seen for the posterior distributions of fixed and random effects.
@@ -278,7 +280,7 @@ The posterior distributions of $R^2$ reflect our expectations as they exhibit th
     %\caption{Posterior conditional $R^2$ distribution calculated by the BVI method from the posterior distributions of fixed and random effects on four randomly simulated datasets with different correlation values $\rho$ between the fixed effects. The blue, green, red and purple distributions correspond to the posterior distribution of conditional $R^2$ for $\rho=0, \rho=0.1, \rho=0.5$ and $\rho=0.9$ respectively. The vertical lines represent the theoretically expected $R^2$ as presented in \Cref{table:1}.}
     \label{fig:conditional_R2}
   }
-  \caption{Posterior $R^2$ distribution calculated by the BVI method from the posterior distributions of fixed and random effects on four randomly simulated datasets with different correlation values $\rho$ between the fixed effects. The red, yellow, green and blue distributions correspond to the posterior distribution of $R^2$ for $\rho=0, \rho=0.1, \rho=0.5$ and $\rho=0.9$ respectively. The theoretical values can be found in \Cref{table:1}.}
+  \caption{Posterior $R^2$ distribution calculated by the BVI method from the posterior distributions of fixed and random effects on four randomly simulated datasets with different correlation values $\rho$ between the fixed effects. The red, yellow, green and blue distributions correspond to the posterior distribution of $R^2$ for $\rho=0, \rho=0.1, \rho=0.5$ and $\rho=0.9$ respectively. The theoretical values can be found in \Cref{table:1} and are shown as vertical lines.}
   \label{fig:R2}
 \end{figure}
 
