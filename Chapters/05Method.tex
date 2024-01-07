@@ -2,7 +2,7 @@
 \label{sec:implementation}
 We now propose a method for calculating relative variable importance in a Bayesian framework, which we call Bayesian Variable Importance (BVI). 
 The BVI method is based on the idea that the relative weights approach, introduced in \Cref{sec:relativeweights}, combined with its extension \citep{matre} can be used to fit a Bayesian LMM.
-With this basis we believe that it is possible to create a Bayesian relative importance measure, by taking the new framework into account.
+With this basis we believe that it is possible to create a Bayesian relative importance measure, by taking the implications of the Bayesian framework into account.
 %The BVI method is based on the relative weights approach introduced in \Cref{sec:relativeweights} and extended by \citet{matre}, to fit a Bayesian LMM using INLA, which is described in \Cref{sec:INLA_framework}.
 When considering the fixed effects there are multiple established methods to compare results with. Here, we compare our results to the previously discussed methods LMG \citep{gromping_relaimpo}, the extended LMG (ELMG) and the extended relative weights (ERW) \citep{matre}.
 The ELMG and the ERW are extensions of the LMG and relative weights methods respectively, to be compatible with the linear mixed models.
@@ -35,19 +35,19 @@ Therefore, the total variance in \eqref{eq:variance_theoretical_x} can be approx
     \text{Var}(\mathbf{y}) \approx \sum_{i=1}^p \beta_{i, \mathbf{Z}}^2 + \sum_{j=1}^q \sigma^2_{\alpha_j} + \sigma^2_{\epsilon} \ ,
 \end{equation}
 where $\beta_{i, \mathbf{Z}}$ is the vector of regression coefficients when regressing $\mathbf{y}$ on $\mathbf{Z}$, $\beta_{i, \mathbf{Z}}^2$ represents the variance of column $\mathbf{z}_i$, $\sigma_{\alpha_j}^2$ the variance of $\boldsymbol{\alpha}_j$ and $\sigma^2_{\varepsilon}$ the variance of $\boldsymbol{\varepsilon}$.
-To map the importances of each column in $\mathbf{z}_i$ back to the importance of the columns $\mathbf{x}_i$, we regress $\mathbf{Z}$ on $\mathbf{X}$ to obtain the matrix $\boldsymbol{\Lambda}$ as in \Cref{sec:relativeweights}.
+To map the importances of each column in $\mathbf{z}_i$ back to the importance of the columns $\mathbf{x}_i$, we regress $\mathbf{X}$ on $\mathbf{Z}$ to obtain the matrix $\boldsymbol{\Lambda}$ as in \Cref{sec:relativeweights}.
 The final model variance obtained from this setup, can then be estimated as 
 \begin{equation}
     \label{eq:variance_calc}
     \text{Var}(\mathbf{y}) \approx \sum_{i=1}^p \text{RI}(\mathbf{x}_i) + \sum_{j=1}^q \sigma^2_{\alpha_j} + \sigma^2_{\epsilon} \approx \sum_{i=1}^p (\Lambda^{[2]}\beta_{\mathbf{Z}}^{[2]})_i + \sum_{j=1}^q \sigma^2_{\alpha_j} + \sigma^2_{\epsilon} \ ,
 \end{equation}
 where $\mathbf{x}_i$ is column $i$ of $\mathbf{X}$.  
-Since the response is standardized the relative importance, or proportion of variance explained, of regressor $X_i$ is given by $\Lambda^{[2]}\beta_{\mathbf{Z}}^{[2]}$ and the relative importance of random intercept $\boldsymbol{\alpha}_j$ is given by $\sigma^2_{\alpha_j}$.
+Since the response is standardized the relative importance, or proportion of variance explained, of regressor $\mathbf{x}_i$ is given by $(\Lambda^{[2]}\beta_{\mathbf{Z}}^{[2]})_i$ and the relative importance of random intercept $\boldsymbol{\alpha}_j$ is given by $\sigma^2_{\alpha_j}$.
 \subsection{Handling the model fit with INLA}
 \label{sec:BVI_handling}
 Once $\mathbf{Z}$ has been created from the projection of $\mathbf{X}$ into the orthogonal space, a model of the response, which has the form as explained in \Cref{sec:LMM}, is fit using $\mathbf{Z}$ as the design matrix and INLA. 
 INLA is our preferred computational tool to fit the Bayesian LMM since it is very efficient, especially for large data sets and complex models.
-After the model is fit, INLA provides the approximate marginal posterior distribution of each component in $\boldsymbol{\beta}_{\mathbf{Z}}$, the precision of $\boldsymbol{\alpha}$, the precision of $\boldsymbol{\varepsilon}$ and allows us to sample from the joint posterior distribution $\pi(\boldsymbol{\beta}_{\mathbf{Z}}, \hat{\sigma}^2_{\alpha}, \hat{\sigma}^2_{\varepsilon} \lvert \mathbf{y})$. 
+After the model is fit, INLA provides the approximate marginal posterior distribution of each component in $\boldsymbol{\beta}_{\mathbf{Z}}$, the precision of $\boldsymbol{\alpha}$, the precision of $\boldsymbol{\varepsilon}$ and allows us to sample from the joint posterior distribution $\pi(\boldsymbol{\beta}_{\mathbf{Z}}, \boldsymbol{\alpha} \lvert \mathbf{y})$. 
 Since each random intercept and the random errors are assumed to be iid, the marginal distributions of the precisions represent the full distributions of the precisions. 
 The respective distributions are then inverted, so that they correspond to the distribution of the variances for $\boldsymbol{\alpha}$ and $\boldsymbol{\varepsilon}$. 
 Since the response is standardized, these variance distributions correspond to a distribution of the proportion of variance explained by each random intercept, i.e. a distribution of their relative importance.
